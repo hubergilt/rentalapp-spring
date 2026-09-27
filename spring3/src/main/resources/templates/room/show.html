@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: layout(~{::title}, ~{::section})}">
+<head><title th:text="${appName} + ' - ' + ${room.name}">Room</title></head>
+<body>
+<section>
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h1 class="h4 mb-0" th:text="${room.name}">Room</h1>
+        <div>
+            <a class="btn btn-outline-secondary btn-sm" th:href="@{/rooms/{id}/edit(id=${room.id})}">Edit</a>
+            <form class="d-inline" th:action="@{/rooms/{id}/delete(id=${room.id})}" method="post"
+                  onsubmit="return confirm('Delete this room?');">
+                <button type="submit" class="btn btn-outline-danger btn-sm">Delete</button>
+            </form>
+        </div>
+    </div>
+    <dl class="row">
+        <dt class="col-sm-3">Floor</dt><dd class="col-sm-9" th:text="${room.floor}"></dd>
+        <dt class="col-sm-3">Price</dt><dd class="col-sm-9" th:text="${#numbers.formatDecimal(room.price, 1, 2)}"></dd>
+        <dt class="col-sm-3">Status</dt><dd class="col-sm-9" th:text="${room.status}"></dd>
+    </dl>
+    <a class="btn btn-link ps-0" th:href="@{/rooms}">&larr; Back to rooms</a>
+</section>
+</body>
+</html>

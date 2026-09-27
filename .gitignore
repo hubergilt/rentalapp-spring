@@ -1,0 +1,15 @@
+# Java / Maven
+target/
+
+# Environment config - never commit real credentials
+.env
+
+# IDE
+.idea/
+*.iml
+
+# Logs
+*.log
+
+# OS generated files
+.DS_Store

@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: layout(~{::title}, ~{::section})}">
+<head><title th:text="${appName} + ' - Dashboard'">Dashboard</title></head>
+<body>
+<section>
+    <h1 class="h4 mb-3">Dashboard</h1>
+
+    <div class="row g-3 mb-4">
+        <div class="col-sm-6 col-lg-3">
+            <div class="card h-100">
+                <div class="card-body">
+                    <div class="text-muted small">Tenants</div>
+                    <div class="fs-3 fw-semibold" th:text="${totalTenants}">0</div>
+                    <a class="small" th:href="@{/tenants}">View all &rarr;</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6 col-lg-3">
+            <div class="card h-100">
+                <div class="card-body">
+                    <div class="text-muted small">Rooms</div>
+                    <div class="fs-3 fw-semibold" th:text="${totalRooms}">0</div>
+                    <div class="small text-muted">
+                        <span class="text-success" th:text="${availableRooms} + ' available'"></span> &middot;
+                        <span class="text-warning" th:text="${occupiedRooms} + ' occupied'"></span> &middot;
+                        <span th:text="${maintenanceRooms} + ' maintenance'"></span>
+                    </div>
+                    <a class="small" th:href="@{/rooms}">View all &rarr;</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6 col-lg-3">
+            <div class="card h-100">
+                <div class="card-body">
+                    <div class="text-muted small">Active tenancies</div>
+                    <div class="fs-3 fw-semibold" th:text="${activeTenancies}">0</div>
+                    <div class="small text-muted" th:text="${endedTenancies} + ' ended'"></div>
+                    <a class="small" th:href="@{/tenancies(status='active')}">View active &rarr;</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6 col-lg-3">
+            <div class="card h-100">
+                <div class="card-body">
+                    <div class="text-muted small" th:text="'Collected in ' + ${#temporals.format(monthLabel.atDay(1), 'MMMM yyyy')}">This month</div>
+                    <div class="fs-3 fw-semibold" th:text="${#numbers.formatDecimal(totalThisMonth, 1, 2)}">0.00</div>
+                    <div class="small text-muted" th:text="${paymentsThisMonth} + ' payment(s)'"></div>
+                    <a class="small" th:href="@{/rent-payments}">View all &rarr;</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4 mb-4">
+        <div class="col-lg-6">
+            <h2 class="h6">Recent rent payments</h2>
+            <table class="table table-sm table-striped">
+                <thead><tr><th>Date</th><th>Tenant</th><th>Amount</th></tr></thead>
+                <tbody>
+                <tr th:each="p : ${recentPayments}">
+                    <td th:text="${p.depositDate}"></td>
+                    <td><a th:href="@{/rent-payments/{id}(id=${p.id})}" th:text="${p.tenant != null ? p.tenant.fullName : '—'}"></a></td>
+                    <td th:text="${#numbers.formatDecimal(p.amount, 1, 2)}"></td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(recentPayments)}"><td colspan="3" class="text-muted">No rent payments yet.</td></tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="col-lg-6">
+            <h2 class="h6">Newest tenancies</h2>
+            <table class="table table-sm table-striped">
+                <thead><tr><th>Start</th><th>Tenant</th><th>Room</th></tr></thead>
+                <tbody>
+                <tr th:each="t : ${recentTenancies}">
+                    <td th:text="${t.startDate}"></td>
+                    <td><a th:href="@{/tenancies/{id}(id=${t.id})}" th:text="${t.tenant.fullName}"></a></td>
+                    <td th:text="${t.room.name}"></td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(recentTenancies)}"><td colspan="3" class="text-muted">No tenancies yet.</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <h2 class="h6">Quick access</h2>
+    <div class="d-flex flex-wrap gap-2">
+        <a class="btn btn-outline-secondary btn-sm" th:href="@{/tenants}">Tenants</a>
+        <a class="btn btn-outline-secondary btn-sm" th:href="@{/rooms}">Rooms</a>
+        <a class="btn btn-outline-secondary btn-sm" th:href="@{/tenancies}">Tenancies</a>
+        <a class="btn btn-outline-secondary btn-sm" th:href="@{/rent-payments}">Rent Payments</a>
+        <a class="btn btn-outline-secondary btn-sm" th:href="@{/security-deposits}">Security Deposits</a>
+        <a class="btn btn-outline-secondary btn-sm" th:href="@{/current-tenancies}">Current Occupancy</a>
+    </div>
+</section>
+</body>
+</html>

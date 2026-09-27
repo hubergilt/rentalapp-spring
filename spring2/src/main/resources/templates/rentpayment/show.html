@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: layout(~{::title}, ~{::section})}">
+<head><title th:text="${appName} + ' - Rent Payment'">Rent Payment</title></head>
+<body>
+<section>
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h1 class="h4 mb-0">Rent payment #<span th:text="${payment.id}"></span></h1>
+        <div>
+            <a class="btn btn-outline-secondary btn-sm" th:href="@{/rent-payments/{id}/edit(id=${payment.id})}">Edit</a>
+            <form class="d-inline" th:action="@{/rent-payments/{id}/delete(id=${payment.id})}" method="post"
+                  onsubmit="return confirm('Delete this rent payment?');">
+                <button type="submit" class="btn btn-outline-danger btn-sm">Delete</button>
+            </form>
+        </div>
+    </div>
+    <dl class="row">
+        <dt class="col-sm-3">Tenant</dt><dd class="col-sm-9" th:text="${payment.tenant != null ? payment.tenant.fullName : '—'}"></dd>
+        <dt class="col-sm-3">Room</dt><dd class="col-sm-9" th:text="${payment.room != null ? payment.room.name : '—'}"></dd>
+        <dt class="col-sm-3">Amount</dt><dd class="col-sm-9" th:text="${#numbers.formatDecimal(payment.amount, 1, 2)}"></dd>
+        <dt class="col-sm-3">Deposit date</dt><dd class="col-sm-9" th:text="${payment.depositDate}"></dd>
+        <dt class="col-sm-3">Period</dt><dd class="col-sm-9" th:text="${payment.period}"></dd>
+        <dt class="col-sm-3">Remarks</dt><dd class="col-sm-9" th:text="${payment.remarks}"></dd>
+    </dl>
+    <a class="btn btn-link ps-0" th:href="@{/rent-payments}">&larr; Back to rent payments</a>
+</section>
+</body>
+</html>

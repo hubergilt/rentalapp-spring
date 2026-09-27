@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: layout(~{::title}, ~{::section})}">
+<head><title th:text="${appName} + ' - ' + (${room.id} != null ? 'Edit room' : 'New room')">Room form</title></head>
+<body>
+<section>
+    <h1 class="h4 mb-3" th:text="${room.id} != null ? 'Edit room' : 'New room'">New room</h1>
+    <form th:action="${room.id} != null ? @{/rooms/{id}(id=${room.id})} : @{/rooms}"
+          th:object="${room}" method="post" class="row g-3">
+
+        <div class="col-md-4">
+            <label class="form-label">Name</label>
+            <input type="text" class="form-control" th:field="*{name}"
+                   th:classappend="${#fields.hasErrors('name')} ? 'is-invalid'"/>
+            <div class="invalid-feedback" th:errors="*{name}"></div>
+        </div>
+        <div class="col-md-4">
+            <label class="form-label">Floor</label>
+            <input type="text" class="form-control" th:field="*{floor}"
+                   th:classappend="${#fields.hasErrors('floor')} ? 'is-invalid'"/>
+            <div class="invalid-feedback" th:errors="*{floor}"></div>
+        </div>
+        <div class="col-md-4">
+            <label class="form-label">Price</label>
+            <input type="number" step="0.01" min="0.01" class="form-control" th:field="*{price}"
+                   th:classappend="${#fields.hasErrors('price')} ? 'is-invalid'"/>
+            <div class="invalid-feedback" th:errors="*{price}"></div>
+        </div>
+        <div class="col-md-4">
+            <label class="form-label">Status</label>
+            <select class="form-select" th:field="*{status}">
+                <option th:each="s : ${T(com.rentalapp.domain.Room.Status).values()}" th:value="${s}" th:text="${s}"></option>
+            </select>
+        </div>
+
+        <div class="col-12">
+            <button type="submit" class="btn btn-primary">Save</button>
+            <a class="btn btn-link" th:href="@{/rooms}">Cancel</a>
+        </div>
+    </form>
+</section>
+</body>
+</html>

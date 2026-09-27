@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <!--
+        LEGACY-CONTAINER build: Spring Boot 2.7.x (javax.* namespace throughout -
+        Spring Framework 5, Hibernate 5, Spring Security 5.7), targeting Tomcat 9
+        and JBoss EAP 7.4. This is a SEPARATE codebase from the jakarta.* rentalapp
+        build (Spring Boot 3, Tomcat 11 / JBoss EAP 8.1) - the two cannot share a
+        WAR or a pom.xml, because javax.persistence.Entity and
+        jakarta.persistence.Entity are different classes in different packages.
+        See RentalappApplication.java for the full explanation.
+    -->
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>2.7.18</version>
+        <relativePath/>
+    </parent>
+
+    <groupId>com.rentalapp</groupId>
+    <artifactId>rentalapp</artifactId>
+    <version>1.0.0</version>
+    <packaging>war</packaging>
+    <name>rentalapp</name>
+    <description>Plain Java/javax EE rewrite of the rentalapp admin dashboard over rentaldb (no Grails) - Tomcat 9 / JBoss EAP 7.4</description>
+
+    <properties>
+        <!-- Red Hat certifies both JDK 8 and JDK 11 for EAP 7.4; Tomcat 9 itself
+             is JDK-version-agnostic above 8. 11 is the modern, still-supported
+             choice for this container generation. Nothing in this codebase uses
+             syntax newer than Java 11 (no `var` - see DashboardController), so
+             dropping this to <java.version>8</java.version> also works if your
+             environment only has JDK 8 available. -->
+        <java.version>11</java.version>
+    </properties>
+
+    <dependencies>
+        <!-- Web MVC + Thymeleaf -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-thymeleaf</artifactId>
+        </dependency>
+
+        <!-- Persistence -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-jpa</artifactId>
+        </dependency>
+        <!-- Pre-rename groupId/artifactId (Oracle renamed this to com.mysql:mysql-connector-j
+             only from the 8.0.33+ / Spring Boot 3 generation onward). Version pinned
+             explicitly rather than relying on spring-boot-starter-parent's managed
+             version for this older artifact coordinate - safer than assuming it's
+             still present in the 2.7.x BOM. -->
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>8.0.33</version>
+            <scope>runtime</scope>
+        </dependency>
+
+        <!-- Validation (mirrors the DB CHECK constraints at the form layer) -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-validation</artifactId>
+        </dependency>
+
+        <!-- Auth: single form-based admin login, BCrypt hash from env var -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security</artifactId>
+        </dependency>
+
+        <!-- Embedded container only used for local `spring-boot:run`; excluded from the WAR classpath contribution that matters at deploy time via 'provided' scope -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-tomcat</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <finalName>rentalapp</finalName>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+            <!-- Powers `mvn compile exec:java -Dexec.args="..."` (see HashPasswordTool) -
+                 a plain, Spring-free way to generate an ADMIN_PASSWORD_HASH without
+                 booting the full application context. -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>3.2.0</version>
+                <configuration>
+                    <mainClass>com.rentalapp.util.HashPasswordTool</mainClass>
+                    <classpathScope>compile</classpathScope>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>

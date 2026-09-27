@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    JBoss EAP / WildFly ONLY - Tomcat has no concept of this file and
+    ignores it entirely, so it's safe to ship in the one WAR that targets
+    both containers.
+
+    Without this, deployment fails at startup with:
+      java.lang.IllegalArgumentException: LoggerFactory is not a Logback
+      LoggerContext but Logback is on the classpath. Either remove Logback
+      or the competing implementation (class org.slf4j.impl.Slf4jLoggerFactory
+      loaded from .../slf4j-jboss-logmanager-....jar)
+
+    Cause: WildFly's module system auto-injects its OWN org.slf4j module
+    (backed by slf4j-jboss-logmanager, wired into JBoss LogManager) into
+    every deployment's classloader by default - alongside the SLF4J +
+    Logback jars this WAR already bundles in WEB-INF/lib (transitively,
+    via spring-boot-starter-logging). Two SLF4J bindings on one classpath
+    means Spring Boot's LogbackLoggingSystem asks LoggerFactory for a
+    Logback LoggerContext at startup and gets JBoss's Slf4jLoggerFactory
+    instead, which is a hard failure before the application context even
+    starts.
+
+    The exclusions below tell WildFly's module system not to inject its
+    default logging-related modules into THIS deployment's classloader, so
+    only the jars actually bundled in the WAR are used - the deployment
+    gets full, self-contained control of its own logging, exactly as it
+    already has under Tomcat.
+-->
+<jboss-deployment-structure>
+    <deployment>
+        <exclude-subsystems>
+            <subsystem name="logging"/>
+        </exclude-subsystems>
+        <exclusions>
+            <module name="org.slf4j"/>
+            <module name="org.slf4j.impl"/>
+            <module name="org.jboss.logging"/>
+            <module name="org.jboss.logging.jul-to-slf4j-stub"/>
+            <module name="org.apache.commons.logging"/>
+            <module name="org.apache.log4j"/>
+        </exclusions>
+    </deployment>
+</jboss-deployment-structure>

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="panel" id="deposit-panel">
+    <h2 class="h6">Security deposit installments</h2>
+
+    <table class="table table-sm">
+        <thead><tr><th>Paid date</th><th>Amount</th><th>Remarks</th><th></th></tr></thead>
+        <tbody>
+        <tr th:each="d : ${deposits}">
+            <td th:text="${d.paidDate}"></td>
+            <td th:text="${#numbers.formatDecimal(d.amount, 1, 2)}"></td>
+            <td th:text="${d.remarks}"></td>
+            <td class="text-end">
+                <button type="button" class="btn btn-sm btn-outline-danger"
+                        th:attr="data-delete-url=@{/tenancies/{tid}/deposits/{did}/delete(tid=${tenancy.id},did=${d.id})}"
+                        onclick="depositPanel.remove(this.dataset.deleteUrl)">Remove</button>
+            </td>
+        </tr>
+        <tr th:if="${#lists.isEmpty(deposits)}"><td colspan="4" class="text-muted">No installments recorded yet.</td></tr>
+        </tbody>
+    </table>
+
+    <form class="row g-2 align-items-end" id="deposit-add-form"
+          th:attr="data-add-url=@{/tenancies/{id}/deposits(id=${tenancy.id})}">
+        <div class="col-auto">
+            <label class="form-label small mb-0">Amount</label>
+            <input type="number" step="0.01" min="0.01" name="amount" class="form-control form-control-sm" required/>
+        </div>
+        <div class="col-auto">
+            <label class="form-label small mb-0">Paid date</label>
+            <input type="date" name="paidDate" class="form-control form-control-sm"/>
+        </div>
+        <div class="col-auto">
+            <label class="form-label small mb-0">Remarks</label>
+            <input type="text" name="remarks" maxlength="100" class="form-control form-control-sm"/>
+        </div>
+        <div class="col-auto">
+            <button type="button" class="btn btn-sm btn-primary" onclick="depositPanel.add()">Add installment</button>
+        </div>
+    </form>
+</div>
+</body>
+</html>

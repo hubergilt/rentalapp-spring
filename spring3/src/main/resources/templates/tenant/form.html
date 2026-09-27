@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: layout(~{::title}, ~{::section})}">
+<head><title th:text="${appName} + ' - ' + (${tenant.id} != null ? 'Edit tenant' : 'New tenant')">Tenant form</title></head>
+<body>
+<section>
+    <h1 class="h4 mb-3" th:text="${tenant.id} != null ? 'Edit tenant' : 'New tenant'">New tenant</h1>
+
+    <form th:action="${tenant.id} != null ? @{/tenants/{id}(id=${tenant.id})} : @{/tenants}"
+          th:object="${tenant}" method="post" class="row g-3">
+
+        <div class="col-md-4">
+            <label class="form-label">First names</label>
+            <input type="text" class="form-control" th:field="*{firstNames}"
+                   th:classappend="${#fields.hasErrors('firstNames')} ? 'is-invalid'"/>
+            <div class="invalid-feedback" th:errors="*{firstNames}"></div>
+        </div>
+        <div class="col-md-4">
+            <label class="form-label">Paternal surname</label>
+            <input type="text" class="form-control" th:field="*{paternalSurname}"
+                   th:classappend="${#fields.hasErrors('paternalSurname')} ? 'is-invalid'"/>
+            <div class="invalid-feedback" th:errors="*{paternalSurname}"></div>
+        </div>
+        <div class="col-md-4">
+            <label class="form-label">Maternal surname</label>
+            <input type="text" class="form-control" th:field="*{maternalSurname}"
+                   th:classappend="${#fields.hasErrors('maternalSurname')} ? 'is-invalid'"/>
+            <div class="invalid-feedback" th:errors="*{maternalSurname}"></div>
+        </div>
+        <div class="col-md-4">
+            <label class="form-label">National ID</label>
+            <input type="text" class="form-control" maxlength="8" th:field="*{nationalId}"
+                   th:classappend="${#fields.hasErrors('nationalId')} ? 'is-invalid'"/>
+            <div class="invalid-feedback" th:errors="*{nationalId}"></div>
+        </div>
+
+        <div class="col-12">
+            <button type="submit" class="btn btn-primary">Save</button>
+            <a class="btn btn-link" th:href="@{/tenants}">Cancel</a>
+        </div>
+    </form>
+</section>
+</body>
+</html>

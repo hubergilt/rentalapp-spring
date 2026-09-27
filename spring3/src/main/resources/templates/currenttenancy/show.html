@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: layout(~{::title}, ~{::section})}">
+<head><title th:text="${appName} + ' - ' + ${row.name}">Current Occupancy</title></head>
+<body>
+<section>
+    <h1 class="h4 mb-3" th:text="${row.name}">Room</h1>
+    <dl class="row">
+        <dt class="col-sm-3">Floor</dt><dd class="col-sm-9" th:text="${row.floor}"></dd>
+        <dt class="col-sm-3">Room status</dt><dd class="col-sm-9" th:text="${row.status}"></dd>
+        <dt class="col-sm-3">Tenant</dt>
+        <dd class="col-sm-9" th:text="${row.occupied} ? ${row.tenantFullName} : '— vacant —'"></dd>
+        <dt class="col-sm-3">Occupied since</dt>
+        <dd class="col-sm-9" th:text="${row.occupied} ? ${row.startDate} : '—'"></dd>
+    </dl>
+    <a class="btn btn-link ps-0" th:href="@{/current-tenancies}">&larr; Back to current occupancy</a>
+</section>
+</body>
+</html>

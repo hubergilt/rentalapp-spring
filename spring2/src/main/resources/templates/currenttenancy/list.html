@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: layout(~{::title}, ~{::section})}">
+<head><title th:text="${appName} + ' - Current Occupancy'">Current Occupancy</title></head>
+<body>
+<section>
+    <h1 class="h4 mb-3">Current Occupancy</h1>
+    <p class="text-muted small">Read-only view over every room, including vacant ones.</p>
+    <table class="table table-striped table-hover align-middle">
+        <thead><tr><th>Room</th><th>Floor</th><th>Room status</th><th>Tenant</th><th>Since</th></tr></thead>
+        <tbody>
+        <tr th:each="row : ${rows}">
+            <td><a th:href="@{/current-tenancies/{id}(id=${row.roomId})}" th:text="${row.name}"></a></td>
+            <td th:text="${row.floor}"></td>
+            <td th:text="${row.status}"></td>
+            <td th:text="${row.occupied} ? ${row.tenantFullName} : '— vacant —'"></td>
+            <td th:text="${row.occupied} ? ${row.startDate} : '—'"></td>
+        </tr>
+        <tr th:if="${#lists.isEmpty(rows)}"><td colspan="5" class="text-muted">No rooms found.</td></tr>
+        </tbody>
+    </table>
+</section>
+</body>
+</html>

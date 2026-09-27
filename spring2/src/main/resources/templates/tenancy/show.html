@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: layout(~{::title}, ~{::section})}">
+<head><title th:text="${appName} + ' - Tenancy'">Tenancy</title></head>
+<body>
+<section>
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h1 class="h4 mb-0">
+            <span th:text="${tenancy.tenant.fullName}"></span> &middot;
+            <span th:text="${tenancy.room.name}"></span>
+        </h1>
+        <div>
+            <a class="btn btn-outline-secondary btn-sm" th:href="@{/tenancies/{id}/edit(id=${tenancy.id})}">Edit</a>
+            <form class="d-inline" th:action="@{/tenancies/{id}/delete(id=${tenancy.id})}" method="post"
+                  onsubmit="return confirm('Delete this tenancy?');">
+                <button type="submit" class="btn btn-outline-danger btn-sm">Delete</button>
+            </form>
+        </div>
+    </div>
+
+    <dl class="row">
+        <dt class="col-sm-3">Status</dt>
+        <dd class="col-sm-9">
+            <span class="badge" th:classappend="${tenancy.active} ? 'text-bg-success' : 'text-bg-secondary'"
+                  th:text="${tenancy.active} ? 'Active' : 'Ended'"></span>
+        </dd>
+        <dt class="col-sm-3">Start date</dt><dd class="col-sm-9" th:text="${tenancy.startDate}"></dd>
+        <dt class="col-sm-3">End date</dt><dd class="col-sm-9" th:text="${tenancy.endDate} ?: '—'"></dd>
+        <dt class="col-sm-3">Deposit refund date</dt><dd class="col-sm-9" th:text="${tenancy.depositRefundDate} ?: '—'"></dd>
+        <dt class="col-sm-3">Deposit refund amount</dt>
+        <dd class="col-sm-9" th:text="${tenancy.depositRefundAmount} ?: '—'"></dd>
+    </dl>
+
+    <hr/>
+    <div th:replace="~{fragments/deposit-panel :: panel}"></div>
+
+    <a class="btn btn-link ps-0 mt-3" th:href="@{/tenancies}">&larr; Back to tenancies</a>
+    <script th:src="@{/js/deposits.js}"></script>
+</section>
+</body>
+</html>

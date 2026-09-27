@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: layout(~{::title}, ~{::section})}">
+<head><title th:text="${appName} + ' - ' + ${tenant.fullName}">Tenant</title></head>
+<body>
+<section>
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h1 class="h4 mb-0" th:text="${tenant.fullName}">Tenant name</h1>
+        <div>
+            <a class="btn btn-outline-secondary btn-sm" th:href="@{/tenants/{id}/edit(id=${tenant.id})}">Edit</a>
+            <form class="d-inline" th:action="@{/tenants/{id}/delete(id=${tenant.id})}" method="post"
+                  onsubmit="return confirm('Delete this tenant?');">
+                <button type="submit" class="btn btn-outline-danger btn-sm">Delete</button>
+            </form>
+        </div>
+    </div>
+
+    <dl class="row">
+        <dt class="col-sm-3">National ID</dt>
+        <dd class="col-sm-9" th:text="${tenant.nationalId}"></dd>
+        <dt class="col-sm-3">First names</dt>
+        <dd class="col-sm-9" th:text="${tenant.firstNames}"></dd>
+        <dt class="col-sm-3">Paternal surname</dt>
+        <dd class="col-sm-9" th:text="${tenant.paternalSurname}"></dd>
+        <dt class="col-sm-3">Maternal surname</dt>
+        <dd class="col-sm-9" th:text="${tenant.maternalSurname}"></dd>
+    </dl>
+
+    <a class="btn btn-link ps-0" th:href="@{/tenants}">&larr; Back to tenants</a>
+</section>
+</body>
+</html>

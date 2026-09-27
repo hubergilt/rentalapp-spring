@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: layout(~{::title}, ~{::section})}">
+<head><title th:text="${appName} + ' - Tenancies'">Tenancies</title></head>
+<body>
+<section>
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h1 class="h4 mb-0">Tenancies</h1>
+        <a class="btn btn-primary btn-sm" th:href="@{/tenancies/new}">+ New tenancy</a>
+    </div>
+
+    <form th:action="@{/tenancies}" method="get" class="row g-2 mb-3">
+        <div class="col-auto">
+            <select name="status" class="form-select">
+                <option value="all" th:selected="${status == 'all'}">All</option>
+                <option value="active" th:selected="${status == 'active'}">Active</option>
+                <option value="ended" th:selected="${status == 'ended'}">Ended</option>
+            </select>
+        </div>
+        <div class="col-auto">
+            <select name="roomId" class="form-select">
+                <option value="">Any room</option>
+                <option th:each="r : ${rooms}" th:value="${r.id}" th:text="${r.name}"
+                        th:selected="${roomId != null and roomId == r.id}"></option>
+            </select>
+        </div>
+        <div class="col-auto">
+            <select name="tenantId" class="form-select">
+                <option value="">Any tenant</option>
+                <option th:each="t : ${tenants}" th:value="${t.id}" th:text="${t.fullName}"
+                        th:selected="${tenantId != null and tenantId == t.id}"></option>
+            </select>
+        </div>
+        <div class="col-auto">
+            <button type="submit" class="btn btn-outline-secondary">Filter</button>
+        </div>
+    </form>
+
+    <table class="table table-striped table-hover align-middle">
+        <thead>
+        <tr><th>Room</th><th>Tenant</th><th>Start</th><th>End</th><th>Status</th><th></th></tr>
+        </thead>
+        <tbody>
+        <tr th:each="t : ${tenancies}">
+            <td th:text="${t.room.name}"></td>
+            <td><a th:href="@{/tenancies/{id}(id=${t.id})}" th:text="${t.tenant.fullName}"></a></td>
+            <td th:text="${t.startDate}"></td>
+            <td th:text="${t.endDate} ?: '—'"></td>
+            <td>
+                <span class="badge" th:classappend="${t.active} ? 'text-bg-success' : 'text-bg-secondary'"
+                      th:text="${t.active} ? 'Active' : 'Ended'"></span>
+            </td>
+            <td class="text-end">
+                <a class="btn btn-sm btn-outline-secondary" th:href="@{/tenancies/{id}/edit(id=${t.id})}">Edit</a>
+            </td>
+        </tr>
+        <tr th:if="${#lists.isEmpty(tenancies)}"><td colspan="6" class="text-muted">No tenancies found.</td></tr>
+        </tbody>
+    </table>
+</section>
+</body>
+</html>

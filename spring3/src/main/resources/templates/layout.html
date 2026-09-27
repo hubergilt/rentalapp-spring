@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="layout(title, content)">
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1"/>
+        <title th:replace="${title}">RentalApp</title>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap.min.css"/>
+        <link rel="stylesheet" th:href="@{/css/style.css}"/>
+    </head>
+    <body class="app-theme" th:classappend="${#strings.toString(theme ?: 'slate')}">
+    <!-- Every page that includes this layout sits behind Spring Security's
+         anyRequest().authenticated() rule (see SecurityConfig) - only
+         login.html is reachable while unauthenticated, and login.html does
+         NOT use this layout at all. So the nav below never needs its own
+         "am I logged in" check; getting here at all already proves it. -->
+    <nav class="navbar navbar-expand-lg navbar-dark app-navbar">
+        <div class="container-fluid">
+            <a class="navbar-brand fw-semibold" th:href="@{/}" th:text="${appName ?: 'RentalApp'}">RentalApp</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="nav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item"><a class="nav-link" th:href="@{/}">Dashboard</a></li>
+                    <li class="nav-item"><a class="nav-link" th:href="@{/tenants}">Tenants</a></li>
+                    <li class="nav-item"><a class="nav-link" th:href="@{/rooms}">Rooms</a></li>
+                    <li class="nav-item"><a class="nav-link" th:href="@{/tenancies}">Tenancies</a></li>
+                    <li class="nav-item"><a class="nav-link" th:href="@{/rent-payments}">Rent Payments</a></li>
+                    <li class="nav-item"><a class="nav-link" th:href="@{/security-deposits}">Security Deposits</a></li>
+                    <li class="nav-item"><a class="nav-link" th:href="@{/current-tenancies}">Current Occupancy</a></li>
+                </ul>
+                <form th:action="@{/logout}" method="post" class="d-flex align-items-center">
+                    <span class="navbar-text text-light me-3" th:if="${username}" th:text="${username}">user</span>
+                    <button class="btn btn-outline-light btn-sm" type="submit">Log out</button>
+                </form>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container my-4">
+        <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+        <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+        <div th:replace="${content}">Page content</div>
+    </main>
+
+    <footer class="text-center text-muted small my-4" th:text="${appTagline ?: 'Rental management'}">Rental management</footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
+    </body>
+    </html>
+</div>
+</body>
+</html>

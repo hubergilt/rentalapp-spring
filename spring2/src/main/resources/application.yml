@@ -1,0 +1,90 @@
+# rentalapp configuration
+#
+# This app NEVER creates or alters the rentaldb schema (spring.jpa.hibernate.ddl-auto: none,
+# below). Tables are owned by the separate rentaldb/Flyway project - run its migrations first.
+#
+# Every value below is resolved from an environment variable (or the matching key in a
+# .env file - see DotenvEnvironmentPostProcessor), with a sensible default after the colon.
+# Real environment variables always win over .env file values.
+
+app:
+  name: ${APP_NAME:RentalApp}
+  tagline: ${APP_TAGLINE:Rental management}
+  theme: ${APP_THEME:slate}
+  admin-username: ${ADMIN_USERNAME:admin}
+  # BCrypt hash only - never a plaintext password. Generate one with:
+  #   mvn compile exec:java -Dexec.args="your-real-password"
+  admin-password-hash: ${ADMIN_PASSWORD_HASH:}
+
+server:
+  # Only used by the embedded container (mvn spring-boot:run / java -jar). Ignored when
+  # deployed as a WAR into Tomcat/JBoss - those containers control their own port.
+  port: ${SERVER_PORT:8080}
+  servlet:
+    context-path: ${CONTEXT_PATH:/}
+  error:
+    whitelabel:
+      enabled: false
+
+spring:
+  application:
+    name: rentalapp
+
+  datasource:
+    # DB_URL is an escape hatch: if set, it is used verbatim and DB_HOST/DB_PORT/DB_NAME
+    # below are ignored.
+    url: ${DB_URL:jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:3306}/${DB_NAME:rentaldb}?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC}
+    username: ${DB_USERNAME:rentalapp}
+    password: ${DB_PASSWORD:changeme}
+    driver-class-name: ${DB_DRIVER:com.mysql.cj.jdbc.Driver}
+    hikari:
+      maximum-pool-size: ${DB_POOL_SIZE:10}
+
+  jpa:
+    # true (Spring Boot's own default) keeps the Hibernate session open for
+    # the life of the request, matching GORM's own implicit behavior in the
+    # original Grails app - several views here walk lazy associations
+    # (tenancy.tenant.fullName, deposit.tenancy.room.name, etc.) while
+    # rendering, which would otherwise throw LazyInitializationException.
+    open-in-view: true
+    hibernate:
+      # Schema is owned and version-controlled by Flyway in the separate rentaldb project.
+      # This MUST stay 'none' - the app only ever reads/writes rows through JPA against
+      # tables that already exist.
+      ddl-auto: none
+    properties:
+      hibernate:
+        format_sql: false
+        jdbc:
+          time_zone: UTC
+    show-sql: ${DB_LOG_SQL:false}
+
+  thymeleaf:
+    cache: ${THYMELEAF_CACHE:true}
+
+  # No custom mvc.static-path-pattern here - Spring Boot's default ("/**",
+  # serving straight out of classpath:/static/) is what every template's
+  # @{/css/style.css} and @{/js/deposits.js} actually expect. A prior
+  # override to "/static/**" silently 404'd both files: Bootstrap (loaded
+  # from the CDN) still rendered fine, but our own stylesheet - which sets
+  # the navbar's actual background color - never loaded, leaving
+  # Bootstrap's navbar-dark white text with no dark background under it.
+logging:
+  level:
+    root: INFO
+    com.rentalapp: ${LOG_LEVEL:INFO}
+
+---
+# Test profile: in-memory H2, never touches the real Flyway-owned rentaldb.
+spring:
+  config:
+    activate:
+      on-profile: test
+  datasource:
+    url: jdbc:h2:mem:rentaldb;MODE=MySQL;DB_CLOSE_DELAY=-1
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
+  jpa:
+    hibernate:
+      ddl-auto: create-drop

@@ -1,0 +1,35 @@
+:root {
+    --brand-color: #2c3e50;
+    --brand-color-dark: #1a252f;
+}
+
+body.app-theme.ocean {
+    --brand-color: #0f6674;
+    --brand-color-dark: #0a4750;
+}
+
+body.app-theme.sunset {
+    --brand-color: #c0392b;
+    --brand-color-dark: #8e2a1f;
+}
+
+.app-navbar {
+    background-color: var(--brand-color) !important;
+}
+
+.login-body {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(180deg, var(--brand-color) 0%, var(--brand-color-dark) 100%);
+}
+
+.login-card {
+    width: 100%;
+    max-width: 380px;
+}
+
+table td, table th {
+    vertical-align: middle;
+}

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: layout(~{::title}, ~{::section})}">
+<head><title th:text="${appName} + ' - Rent Payments'">Rent Payments</title></head>
+<body>
+<section>
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h1 class="h4 mb-0">Rent Payments</h1>
+        <a class="btn btn-primary btn-sm" th:href="@{/rent-payments/new}">+ New payment</a>
+    </div>
+    <table class="table table-striped table-hover align-middle">
+        <thead>
+        <tr><th>Deposit date</th><th>Period</th><th>Tenant</th><th>Room</th><th>Amount</th><th>Remarks</th><th></th></tr>
+        </thead>
+        <tbody>
+        <tr th:each="p : ${payments}">
+            <td th:text="${p.depositDate}"></td>
+            <td th:text="${p.period}"></td>
+            <td><a th:href="@{/rent-payments/{id}(id=${p.id})}" th:text="${p.tenant != null ? p.tenant.fullName : '—'}"></a></td>
+            <td th:text="${p.room != null ? p.room.name : '—'}"></td>
+            <td th:text="${#numbers.formatDecimal(p.amount, 1, 2)}"></td>
+            <td th:text="${p.remarks}"></td>
+            <td class="text-end">
+                <a class="btn btn-sm btn-outline-secondary" th:href="@{/rent-payments/{id}/edit(id=${p.id})}">Edit</a>
+            </td>
+        </tr>
+        <tr th:if="${#lists.isEmpty(payments)}"><td colspan="7" class="text-muted">No rent payments found.</td></tr>
+        </tbody>
+    </table>
+</section>
+</body>
+</html>

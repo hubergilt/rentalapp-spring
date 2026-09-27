@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: layout(~{::title}, ~{::section})}">
+<head><title th:text="${appName} + ' - Security Deposits'">Security Deposits</title></head>
+<body>
+<section>
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h1 class="h4 mb-0">Security Deposits</h1>
+        <a class="btn btn-primary btn-sm" th:href="@{/security-deposits/new}">+ New deposit</a>
+    </div>
+    <table class="table table-striped table-hover align-middle">
+        <thead><tr><th>Paid date</th><th>Tenancy</th><th>Amount</th><th>Remarks</th><th></th></tr></thead>
+        <tbody>
+        <tr th:each="d : ${deposits}">
+            <td th:text="${d.paidDate}"></td>
+            <td>
+                <a th:href="@{/security-deposits/{id}(id=${d.id})}"
+                   th:text="${d.tenancy.tenant.fullName} + ' / ' + ${d.tenancy.room.name}"></a>
+            </td>
+            <td th:text="${#numbers.formatDecimal(d.amount, 1, 2)}"></td>
+            <td th:text="${d.remarks}"></td>
+            <td class="text-end">
+                <a class="btn btn-sm btn-outline-secondary" th:href="@{/security-deposits/{id}/edit(id=${d.id})}">Edit</a>
+            </td>
+        </tr>
+        <tr th:if="${#lists.isEmpty(deposits)}"><td colspan="5" class="text-muted">No security deposits found.</td></tr>
+        </tbody>
+    </table>
+</section>
+</body>
+</html>

@@ -1,0 +1,2 @@
+org.springframework.boot.env.EnvironmentPostProcessor=\
+com.rentalapp.config.DotenvEnvironmentPostProcessor

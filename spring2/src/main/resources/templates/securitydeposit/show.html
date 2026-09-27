@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: layout(~{::title}, ~{::section})}">
+<head><title th:text="${appName} + ' - Security Deposit'">Security Deposit</title></head>
+<body>
+<section>
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h1 class="h4 mb-0">Security deposit #<span th:text="${deposit.id}"></span></h1>
+        <div>
+            <a class="btn btn-outline-secondary btn-sm" th:href="@{/security-deposits/{id}/edit(id=${deposit.id})}">Edit</a>
+            <form class="d-inline" th:action="@{/security-deposits/{id}/delete(id=${deposit.id})}" method="post"
+                  onsubmit="return confirm('Delete this security deposit?');">
+                <button type="submit" class="btn btn-outline-danger btn-sm">Delete</button>
+            </form>
+        </div>
+    </div>
+    <dl class="row">
+        <dt class="col-sm-3">Tenancy</dt>
+        <dd class="col-sm-9">
+            <a th:href="@{/tenancies/{id}(id=${deposit.tenancy.id})}"
+               th:text="${deposit.tenancy.tenant.fullName} + ' / ' + ${deposit.tenancy.room.name}"></a>
+        </dd>
+        <dt class="col-sm-3">Amount</dt><dd class="col-sm-9" th:text="${#numbers.formatDecimal(deposit.amount, 1, 2)}"></dd>
+        <dt class="col-sm-3">Paid date</dt><dd class="col-sm-9" th:text="${deposit.paidDate}"></dd>
+        <dt class="col-sm-3">Remarks</dt><dd class="col-sm-9" th:text="${deposit.remarks}"></dd>
+    </dl>
+    <a class="btn btn-link ps-0" th:href="@{/security-deposits}">&larr; Back to security deposits</a>
+</section>
+</body>
+</html>

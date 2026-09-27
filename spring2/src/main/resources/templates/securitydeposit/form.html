@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: layout(~{::title}, ~{::section})}">
+<head><title th:text="${appName} + ' - ' + (${deposit.id} != null ? 'Edit security deposit' : 'New security deposit')">Security deposit form</title></head>
+<body>
+<section>
+    <h1 class="h4 mb-3" th:text="${deposit.id} != null ? 'Edit security deposit' : 'New security deposit'">New security deposit</h1>
+    <form th:action="${deposit.id} != null ? @{/security-deposits/{id}(id=${deposit.id})} : @{/security-deposits}"
+          th:object="${deposit}" method="post" class="row g-3">
+
+        <div class="col-md-6">
+            <label class="form-label">Tenancy</label>
+            <select class="form-select" th:field="*{tenancy}">
+                <option value="">Select a tenancy</option>
+                <option th:each="t : ${tenancies}" th:value="${t.id}"
+                        th:text="${t.tenant.fullName} + ' / ' + ${t.room.name}"></option>
+            </select>
+            <div class="invalid-feedback d-block text-danger" th:if="${#fields.hasErrors('tenancy')}" th:errors="*{tenancy}"></div>
+        </div>
+        <div class="col-md-3">
+            <label class="form-label">Amount</label>
+            <input type="number" step="0.01" min="0.01" class="form-control" th:field="*{amount}"
+                   th:classappend="${#fields.hasErrors('amount')} ? 'is-invalid'"/>
+            <div class="invalid-feedback" th:errors="*{amount}"></div>
+        </div>
+        <div class="col-md-3">
+            <label class="form-label">Paid date</label>
+            <input type="date" class="form-control" th:field="*{paidDate}"
+                   th:classappend="${#fields.hasErrors('paidDate')} ? 'is-invalid'"/>
+            <div class="invalid-feedback" th:errors="*{paidDate}"></div>
+        </div>
+        <div class="col-md-6">
+            <label class="form-label">Remarks (optional)</label>
+            <input type="text" maxlength="100" class="form-control" th:field="*{remarks}"/>
+        </div>
+
+        <div class="col-12">
+            <button type="submit" class="btn btn-primary">Save</button>
+            <a class="btn btn-link" th:href="@{/security-deposits}">Cancel</a>
+        </div>
+    </form>
+</section>
+</body>
+</html>
