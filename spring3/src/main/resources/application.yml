@@ -35,6 +35,12 @@ spring:
         url: https://localhost:8443/admin
         instance:
           service-base-url: https://localhost:8443
+          # Credentials the Admin server uses to poll /actuator/** (HTTP Basic, see
+          # SecurityConfig.actuatorFilterChain). Same single admin user as the login form;
+          # MONITOR_PASSWORD is that user's PLAINTEXT password, kept only in .env.
+          metadata:
+            "[user.name]": ${ADMIN_USERNAME:admin}
+            "[user.password]": ${MONITOR_PASSWORD:}
 
   datasource:
     # DB_URL is an escape hatch: if set, it is used verbatim and DB_HOST/DB_PORT/DB_NAME
@@ -84,10 +90,10 @@ management:
   endpoints:
     web:
       exposure:
-        include: "*"
+        include: health,info,metrics,loggers,threaddump
   endpoint:
     health:
-      show-details: always
+      show-details: when-authorized
 
 ---
 # Test profile: in-memory H2, never touches the real Flyway-owned rentaldb.
