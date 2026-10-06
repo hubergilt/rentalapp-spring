@@ -29,6 +29,12 @@ server:
 spring:
   application:
     name: rentalapp
+  boot:
+    admin:
+      client:
+        url: https://localhost:8443/admin
+        instance:
+          service-base-url: https://localhost:8443
 
   datasource:
     # DB_URL is an escape hatch: if set, it is used verbatim and DB_HOST/DB_PORT/DB_NAME
@@ -73,6 +79,15 @@ logging:
   level:
     root: INFO
     com.rentalapp: ${LOG_LEVEL:INFO}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: always
 
 ---
 # Test profile: in-memory H2, never touches the real Flyway-owned rentaldb.
